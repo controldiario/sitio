@@ -3,26 +3,97 @@
 <head>
 <meta charset="UTF-8">
 <title>Panel Admin</title>
+
+<style>
+body{font-family:Arial;background:#f1f5f9;padding:20px;}
+h1{color:#2563eb;}
+.card{
+  background:white;
+  padding:15px;
+  margin-bottom:10px;
+  border-radius:10px;
+  display:grid;
+  grid-template-columns:1fr 80px 80px;
+  gap:10px;
+}
+input{
+  padding:8px;
+}
+button{
+  background:#2563eb;
+  color:white;
+  border:none;
+  border-radius:6px;
+  padding:8px;
+  cursor:pointer;
+}
+.delete{background:#dc2626;}
+</style>
 </head>
 <body>
 
 <script>
-if(localStorage.getItem("ADMIN_AUTH") !== "true"){
-  alert("No autorizado ❌");
-  window.location.href = "admin.html";
+if(localStorage.getItem("ADMIN_AUTH")!=="true"){
+  window.location.href="admin.html";
 }
 </script>
 
 <h1>Panel Administrador</h1>
-<p>Si ves esto, el login FUNCIONA ✅</p>
+
+<h3>Agregar producto</h3>
+<input id="name" placeholder="Nombre">
+<input id="price" placeholder="Precio">
+<input id="cat" placeholder="Categoría">
+<input id="img" placeholder="URL Imagen">
+<button onclick="add()">Agregar</button>
+
+<h3>Productos</h3>
+<div id="list"></div>
 
 <button onclick="logout()">Cerrar sesión</button>
 
 <script>
+let productos = JSON.parse(localStorage.getItem("PRODUCTS")) || [];
+
+function save(){
+  localStorage.setItem("PRODUCTS",JSON.stringify(productos));
+}
+
+function render(){
+  list.innerHTML="";
+  productos.forEach((p,i)=>{
+    list.innerHTML+=`
+    <div class="card">
+      <input value="${p.name}" onchange="productos[${i}].name=this.value;save()">
+      <input value="${p.price}" onchange="productos[${i}].price=this.value;save()">
+      <button class="delete" onclick="del(${i})">X</button>
+    </div>`;
+  });
+}
+
+function add(){
+  productos.push({
+    name:name.value,
+    price:parseFloat(price.value),
+    cat:cat.value,
+    img:img.value
+  });
+  save();
+  render();
+}
+
+function del(i){
+  productos.splice(i,1);
+  save();
+  render();
+}
+
 function logout(){
   localStorage.removeItem("ADMIN_AUTH");
   window.location.href="admin.html";
 }
+
+render();
 </script>
 
 </body>
