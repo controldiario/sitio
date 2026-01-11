@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>Tienda Online</title>
+
+<style>
+body{
+  margin:0;
+  font-family:Arial, sans-serif;
+  background:#f1f5f9;
+}
+
+/* HEADER */
+header{
+  background:#2563eb;
+  color:white;
+  padding:12px 20px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+}
+header h1{margin:0;font-size:22px;}
+
+/* MENU */
+.nav{display:flex;gap:20px;}
+.nav-item{position:relative;cursor:pointer;font-weight:bold;}
+.nav-item:hover{text-decoration:underline;}
+.dropdown{
+  display:none;
+  position:absolute;
+  top:30px;
+  left:0;
+  background:white;
+  color:black;
+  border-radius:10px;
+  min-width:200px;
+  box-shadow:0 10px 25px rgba(0,0,0,.15);
+  padding:10px;
+}
+.nav-item:hover .dropdown{display:block;}
+.dropdown div{padding:6px;border-radius:6px;}
+.dropdown div:hover{background:#e5e7eb;}
+
+/* LAYOUT */
+.main{
+  display:grid;
+  grid-template-columns:1fr 300px;
+}
+
+/* PRODUCTOS */
+.grid{
+  padding:20px;
+  display:grid;
+  grid-template-columns:repeat(auto-fill,minmax(220px,1fr));
+  gap:20px;
+}
+.card{
+  background:white;
+  border-radius:14px;
+  padding:15px;
+  box-shadow:0 4px 14px rgba(0,0,0,.12);
+  display:flex;
+  flex-direction:column;
+}
+.card img{width:100%;height:150px;object-fit:contain;}
+.card h3{font-size:16px;}
+.card p{font-size:13px;color:#64748b;}
+.price{font-size:18px;font-weight:bold;}
+.card button{
+  margin-top:auto;
+  background:#2563eb;
+  color:white;
+  border:none;
+  padding:10px;
+  border-radius:10px;
+  cursor:pointer;
+}
+
+/* CARRITO FIJO */
+.cart{
+  background:white;
+  border-left:1px solid #e5e7eb;
+  padding:15px;
+  position:sticky;
+  top:0;
+  height:calc(100vh - 60px);
+}
+.cart h3{margin-top:0;}
+.cart-item{
+  display:flex;
+  justify-content:space-between;
+  font-size:14px;
+  border-bottom:1px solid #e5e7eb;
+  padding:6px 0;
+}
+.cart-total{
+  margin-top:10px;
+  font-size:18px;
+  font-weight:bold;
+}
+.cart-count{
+  background:red;
+  color:white;
+  padding:2px 6px;
+  border-radius:50%;
+  font-size:12px;
+}
+</style>
+</head>
+
+<body>
+
+<header>
+  <h1>🛒 Mi Tienda</h1>
+
+  <nav class="nav">
+    <div class="nav-item">Alimentos
+      <div class="dropdown">
+        <div onclick="filtrar('Arroz')">Arroz</div>
+        <div onclick="filtrar('Bebidas')">Bebidas</div>
+        <div onclick="filtrar('Snacks')">Snacks</div>
+      </div>
+    </div>
+    <div class="nav-item" onclick="mostrar(productos)">Todos</div>
+  </nav>
+
+  <div>Carrito <span class="cart-count" id="cartCount">0</span></div>
+</header>
+
+<div class="main">
+
+  <div class="grid" id="productos"></div>
+
+  <!-- CARRITO -->
+  <aside class="cart">
+    <h3>🛒 Carrito</h3>
+    <div id="cartItems"></div>
+    <div class="cart-total">Total: $<span id="cartTotal">0.00</span></div>
+  </aside>
+
+</div>
+
+<script>
+const productos=[
+ {nombre:"Arroz 5lb",precio:4.50,sub:"Arroz",img:"https://images.unsplash.com/photo-1604908177522-937c9c84b33f"},
+ {nombre:"Bebida 2L",precio:1.75,sub:"Bebidas",img:"https://images.unsplash.com/photo-1629203851122-3726b53c3c8b"},
+ {nombre:"Papas fritas",precio:1.25,sub:"Snacks",img:"https://images.unsplash.com/photo-1586190848861-99aa4a171e90"},
+ {nombre:"Smart TV 50”",precio:399.99,sub:"TV",img:"https://images.unsplash.com/photo-1593784991095-a205069470b6"}
+];
+
+let carrito=[];
+const cont=document.getElementById("productos");
+
+function mostrar(lista){
+  cont.innerHTML="";
+  lista.forEach(p=>{
+    cont.innerHTML+=`
+    <div class="card">
+      <img src="${p.img}">
+      <h3>${p.nombre}</h3>
+      <p>${p.sub}</p>
+      <div class="price">$${p.precio.toFixed(2)}</div>
+      <button onclick='addCart(${JSON.stringify(p)})'>Agregar</button>
+    </div>`;
+  });
+}
+
+function filtrar(sub){
+  mostrar(productos.filter(p=>p.sub===sub));
+}
+
+function addCart(p){
+  carrito.push(p);
+  renderCart();
+}
+
+function renderCart(){
+  cartItems.innerHTML="";
+  let total=0;
+  carrito.forEach(p=>{
+    total+=p.precio;
+    cartItems.innerHTML+=`
+    <div class="cart-item">
+      <span>${p.nombre}</span>
+      <span>$${p.precio.toFixed(2)}</span>
+    </div>`;
+  });
+  cartTotal.innerText=total.toFixed(2);
+  cartCount.innerText=carrito.length;
+}
+
+mostrar(productos);
+</script>
+
+</body>
+</html>

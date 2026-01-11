@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>Login Admin</title>
+
+<style>
+body{
+  background:#f1f5f9;
+  font-family:Arial;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  height:100vh;
+}
+.card{
+  background:white;
+  padding:30px;
+  width:320px;
+  border-radius:12px;
+  box-shadow:0 10px 30px rgba(0,0,0,.15);
+}
+h2{text-align:center;color:#2563eb;}
+input,button{
+  width:100%;
+  padding:10px;
+  margin-top:10px;
+}
+button{
+  background:#2563eb;
+  color:white;
+  border:none;
+  border-radius:6px;
+  font-weight:bold;
+  cursor:pointer;
+}
+</style>
+</head>
+<body>
+
+<div class="card">
+  <h2>Administrador</h2>
+  <input type="password" id="password" placeholder="Contraseña">
+  <!-- CLAVE: type="button" -->
+  <button type="button" onclick="login()">Entrar</button>
+</div>
+
+<script>
+function login(){
+  const pass = document.getElementById("password").value;
+
+  console.log("Intentando login...");
+
+  if(pass === "1234"){
+    localStorage.setItem("ADMIN_AUTH","true");
+    alert("Acceso correcto ✅");
+    window.location.href = "panel.html";
+  }else{
+    alert("Contraseña incorrecta ❌");
+  }
+}
+</script>
+
+</body>
+</html>
