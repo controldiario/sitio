@@ -1,26 +1,220 @@
-<div class="grid" id="productos"></div>
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>Mi Tienda</title>
+
+<style>
+body{
+  margin:0;
+  font-family:Arial, sans-serif;
+  background:#f1f5f9;
+}
+
+/* HEADER */
+header{
+  background:#0f172a;
+  color:white;
+  padding:14px 20px;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+}
+header h1{
+  margin:0;
+  font-size:22px;
+}
+
+/* LAYOUT */
+.main{
+  display:grid;
+  grid-template-columns:1fr 320px;
+}
+
+/* PRODUCTOS */
+.grid{
+  padding:20px;
+  display:grid;
+  grid-template-columns:repeat(auto-fill,minmax(220px,1fr));
+  gap:20px;
+}
+.card{
+  background:white;
+  border-radius:14px;
+  padding:15px;
+  box-shadow:0 6px 18px rgba(0,0,0,.12);
+  display:flex;
+  flex-direction:column;
+}
+.card img{
+  width:100%;
+  height:150px;
+  object-fit:contain;
+}
+.card h3{
+  font-size:16px;
+  margin:10px 0 5px;
+}
+.card p{
+  font-size:13px;
+  color:#64748b;
+}
+.price{
+  font-size:18px;
+  font-weight:bold;
+  margin:8px 0;
+}
+.card button{
+  margin-top:auto;
+  padding:10px;
+  border:none;
+  border-radius:10px;
+  background:#2563eb;
+  color:white;
+  cursor:pointer;
+  font-weight:bold;
+}
+
+/* CARRITO */
+.cart{
+  background:white;
+  border-left:1px solid #e5e7eb;
+  padding:15px;
+  position:sticky;
+  top:0;
+  height:calc(100vh - 60px);
+}
+.cart h3{
+  margin-top:0;
+}
+.cart-item{
+  display:flex;
+  justify-content:space-between;
+  font-size:14px;
+  border-bottom:1px solid #e5e7eb;
+  padding:6px 0;
+}
+.cart-total{
+  font-size:18px;
+  font-weight:bold;
+  margin-top:10px;
+}
+.cart-count{
+  background:red;
+  color:white;
+  padding:2px 7px;
+  border-radius:50%;
+  font-size:12px;
+}
+.empty{
+  padding:20px;
+  color:#64748b;
+}
+</style>
+</head>
+
+<body>
+
+<header>
+  <h1>🛒 Mi Tienda</h1>
+  <div>
+    Carrito <span class="cart-count" id="cartCount">0</span>
+  </div>
+</header>
+
+<div class="main">
+
+  <!-- PRODUCTOS -->
+  <div class="grid" id="productos"></div>
+
+  <!-- CARRITO -->
+  <aside class="cart">
+    <h3>Carrito</h3>
+    <div id="cartItems"></div>
+    <div class="cart-total">
+      Total: $<span id="cartTotal">0.00</span>
+    </div>
+  </aside>
+
+</div>
 
 <script>
-document.addEventListener("DOMContentLoaded",()=>{
-  const cont = document.getElementById("productos");
-  const productos = JSON.parse(localStorage.getItem("PRODUCTS")) || [];
+/* =========================
+   LEER PRODUCTOS DEL ADMIN
+========================= */
+const productos = JSON.parse(localStorage.getItem("PRODUCTS")) || [];
+const cont = document.getElementById("productos");
+
+/* =========================
+   CARRITO
+========================= */
+let carrito = [];
+const cartItems = document.getElementById("cartItems");
+const cartTotal = document.getElementById("cartTotal");
+const cartCount = document.getElementById("cartCount");
+
+/* =========================
+   MOSTRAR PRODUCTOS
+========================= */
+function mostrarProductos(){
+  cont.innerHTML="";
 
   if(productos.length === 0){
-    cont.innerHTML="<p style='padding:20px'>No hay productos cargados</p>";
+    cont.innerHTML = `
+      <div class="empty">
+        No hay productos cargados.<br>
+        Entra al panel de administrador para agregar productos.
+      </div>
+    `;
     return;
   }
 
-  cont.innerHTML="";
   productos.forEach(p=>{
-    cont.innerHTML+=`
+    cont.innerHTML += `
       <div class="card">
         <img src="${p.img}">
         <h3>${p.name}</h3>
         <p>${p.cat}</p>
         <div class="price">$${Number(p.price).toFixed(2)}</div>
-        <button>Agregar al carrito</button>
+        <button onclick='agregarCarrito(${JSON.stringify(p)})'>
+          Agregar al carrito
+        </button>
       </div>
     `;
   });
-});
+}
+
+/* =========================
+   CARRITO FUNCIONES
+========================= */
+function agregarCarrito(p){
+  carrito.push(p);
+  renderCarrito();
+}
+
+function renderCarrito(){
+  cartItems.innerHTML="";
+  let total=0;
+
+  carrito.forEach(p=>{
+    total+=Number(p.price);
+    cartItems.innerHTML+=`
+      <div class="cart-item">
+        <span>${p.name}</span>
+        <span>$${Number(p.price).toFixed(2)}</span>
+      </div>
+    `;
+  });
+
+  cartTotal.innerText = total.toFixed(2);
+  cartCount.innerText = carrito.length;
+}
+
+/* =========================
+   INIT
+========================= */
+mostrarProductos();
 </script>
+
+</body>
+</html>
